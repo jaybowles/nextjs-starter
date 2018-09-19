@@ -9,6 +9,8 @@
   "dependencies": {
     "babel-core": "^6.26.3",
     "babel-plugin-wrap-in-js": "^1.1.1",
+    "babel-preset-env": "^1.7.0",
+    "babel-register": "^6.26.0",
     "bootstrap": "^4.1.2",
     "connect-mongo": "^2.0.1",
     "dotenv": "^6.0.0",
@@ -51,7 +53,7 @@
   },
   "scripts": {
     "test": "xo",
-    "dev": "NODE_ENV=development PORT=3000 node index.js",
+    "dev": "env NODE_ENV=development PORT=3000 nodemon index.js",
     "build": "next build",
     "start": "node index.js",
     "postinstall": "next build"
