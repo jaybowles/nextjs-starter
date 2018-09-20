@@ -14,6 +14,7 @@
     "bootstrap": "^4.1.2",
     "connect-mongo": "^2.0.1",
     "dotenv": "^6.0.0",
+    "eosjs": "^16.0.8",
     "express-session": "^1.15.5",
     "ionicons": "^4.2.4",
     "isomorphic-fetch": "^2.2.1",
@@ -41,6 +42,7 @@
     "universal-cookie": "^2.2.0"
   },
   "devDependencies": {
+    "babel-plugin-transform-object-rest-spread": "^6.26.0",
     "eslint": "^5.1.0",
     "eslint-config-xo": "^0.23.0",
     "eslint-config-xo-react": "^0.17.0",
@@ -59,7 +61,7 @@
     "postinstall": "next build"
   },
   "engines": {
-    "node": "8.11.x"
+    "node": "10.8.x"
   },
   "xo": {
     "space:": 2,
