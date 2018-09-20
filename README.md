@@ -1,4 +1,4 @@
-# Overview
+# THIS README IS OUTDATED. WILL UPDATE LATER. DONT FOLLOW ANY OF THE BELOW -ALBERT
 NoteChain demonstrates the eosio platform running a blockchain as a local single node test net with a simple DApp, NoteChain. NoteChain allows users to create and update notes. This guide uses scripts, containing relevant commands, which will show you how to install, build and run NoteChain, and by doing so will demonstrate:
 
 - Downloading and running eosio in docker;
