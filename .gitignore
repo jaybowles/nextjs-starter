@@ -5,3 +5,11 @@ node_modules/
 .env
 .DS_Store
 /.env.production
+
+#compile contract files
+**/*.abi
+**/*.wasm
+**/*.wast
+
+#blockchain data
+**/data/*

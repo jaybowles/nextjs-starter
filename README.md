@@ -1,84 +1,256 @@
-[![XO code style](https://img.shields.io/badge/code_style-XO-5ed9c7.svg)](https://github.com/sindresorhus/xo)
-# Next.js Starter Project
+# Overview
+NoteChain demonstrates the eosio platform running a blockchain as a local single node test net with a simple DApp, NoteChain. NoteChain allows users to create and update notes. This guide uses scripts, containing relevant commands, which will show you how to install, build and run NoteChain, and by doing so will demonstrate:
 
-This is a starter project for React that uses Next.js.
+- Downloading and running eosio in docker;
+- Managing your docker container;
+- Setting up and running a local single node testnet;
+- Setting up wallets, keys, and accounts;
+- Writing and deploying a smart contract;
+- Implementing a web based UI using React;
+- Connecting the UI to the blockchain using eosjs;
+- Styling the UI using Material-UI.
 
-It includes the following features:
+Github eosio-project-boilerplate-simple (https://github.com/EOSIO/eosio-project-boilerplate-simple) contains the UI and Smart Contract code, as well as setup scripts which will initialise and start all the necessary components.
 
-* Authentication via Email, Facebook, Twitter and Google+ (using Express and Passport).
-* Basic account management (update details, link/unlink accounts, delete account).
-* Session support with secure HTTP Only cookies.
-* CSRF Tokens.
-* Bootstrap 4 and Reactstrap (Bootstrap components for React).
-* SCSS, with live reloading.
-* Comes with Ionicons icon font and shows how to bundle other CSS and fonts.
+The sample DApp demonstrates storing data in multi index table and retrieving this data into the web based UI. NoteChain is a simple note taking application, where notes are tied to user accounts. For this example, all accounts are pre-created by scripts and the account details are displayed at the bottom of the NoteChain UI.
 
-You can see a live demo at **https://nextjs-starter.now.sh**
+Each account can then be used to add a note to the blockchain. The individual notes are saved in a multi-index table and for simplicity are of fixed width. Each account may have one note attached to it, adding a note to an account with an existing note will replace the existing note with a new note.
 
-## About 
+**Any private keys you see in this repository are for demo purposes only. For a real DApp NEVER expose the private keys.**
 
-Next.js is a framework that makes it easy to create Universal web apps in React. With Next.js, React pages are automatically rendered on both client and server side, without the hassle of setting up dependancies like webpack or babel and with automatic routing.
+# Prerequisites
 
-This is a starter project that provides an example of how to use Next.js with Express (the popular web server framework for Node.js), with SCSS, Bootstrap, reactstrap (Boostrap 4 for React), the Ionicons icon set, how to include data from remote REST APIs and incorporates an authentication system that supports both oAuth and Email using Passport (a popular authentication framework for Node.js).
+Make sure Docker and Node.js are installed
 
-This project exists to make it easier to get started with creating universal apps in React. You are invited to use it as a reference or to copy it and use it as a base for your own projects. Contributions to improve this project are welcome.
+* Install Docker: https://docs.docker.com/docker-for-mac/install/
+* Install Node.js: https://nodejs.org/en/
 
-## Running locally in development mode
+The DApp and eosio will occupy the ports 3000, 8888 and 9876. Make sure nothing else is already running on these ports.
 
-To get started, just clone the repository and run `npm install && npm run dev`:
+Clone the repository:
+```sh
+git clone https://github.com/EOSIO/eosio-project-boilerplate-simple.git
+```
 
-    git clone https://github.com/iaincollins/nextjs-starter.git
-    npm install
-    npm run dev
+The following guide assumes you are using macOS.
 
-Note: If you are running on Windows run install --noptional flag (i.e. `npm install --no-optional`) which will skip installing fsevents.
+# Quick start - Run the DApp
 
-## Building and deploying in production
+In this section we provide a single command script to run all the commands needed to start both the blockchain and UI. For more detail on each component see the `Detailed guide` below.
 
-If you wanted to run this site in production, you should install modules then build the site with `npm run build` and run it with `npm start`:
+**To start**
+```sh
+./quick_start.sh
+```
 
-    npm install
-    npm run build
-    npm start
+The above command will execute the following in sequence:
 
-You should run `npm run build` again any time you make changes to the site.
+1. `first_time_setup.sh`
+2. `start_eosio_docker.sh`
+3. `start_frontend.sh`
 
-Note: If you are already running a webserver on port 80 (e.g. Macs usually have the Apache webserver running on port 80) you can still start the example in production mode by passing a different port as an Environment Variable when starting (e.g. `PORT=3000 npm start`).
+**To stop**, press `ctrl+c` on your keyboard, and execute:
+```sh
+docker stop eosio_notechain_container
+```
 
-## Configuring
+# Detailed guide
 
-If you configure a .env file (just copy [.env.default](https://github.com/iaincollins/nextjs-starter/blob/master/.env.default) over to '.env' and fill in the options) you can configure a range of options.
+In this section we will describe in detail each script used to run the NoteChain environment in details.
 
-See the [AUTHENTICATION.md](https://github.com/iaincollins/nextjs-starter/blob/master/AUTHENTICATION.md) for how to set up oAuth if you want to do that. It suggested you start with Twitter as it's the easiest to get working.
+## Initial setup
 
-## Deploying to the cloud with now.sh
+```sh
+./first_time_setup.sh
+```
 
-To deploy on [Zeit's](https://zeit.co) cloud platform `now` just install it, clone this repository and run `now` in the working directory:
+Executing the above shell script verifies that docker and node.js are installed. It then downloads the `eosio/eos-dev` docker image (which contains a full version of the eosio blockchain), removes any previous instances of this docker container and installs node packages for the frontend react app.
 
-    npm install -g now
-    now
+## Initialise and start blockchain and DApp
 
-If you configure a .env file `now` will include it when deploying if you use the -E option to deploy:
+After the initialisation, two terminal windows are required, both opened in the repository directory
 
-    now -E
+- The **first terminal window** is for **blockchain** process.
+- The **second terminal window** is for **frontend** react app.
 
-If you want to have your local `.env` file contain variables for local development and have a different sent of varaibles you use in production or staging, you can create additional .env files and tell `now` to use a specific 
-file when deploying.
+**running the blockchain**
 
-For example:
+For the first (blockchain) terminal window, running
+```sh
+./start_eosio_docker.sh
+```
+will:
 
-    now -E production.env
+- Start the eosio blockchain
+- Create smart contract owner account,
+- Deploy smart contract
+- Pre-create 7 user accounts with hard coded keys.
 
-## Running tests
+The log of blockchain will be displayed on your screen. eosio is now running and starts producing blocks.
 
-Style formatting is enforced with the JavaScript style linter [xo](https://github.com/sindresorhus/xo) which is invoked when running `npm test`.
+**running the DApp**
 
-Reflecting how most examples of Next.js are written, in  `package.json` we have configured 'xo' to tell it this project uses spaces (not tabs) in both JavaScript and JSX and to not use semicolons.
+For the second (frontend) terminal window, running
+```sh
+./start_frontend.sh
+```
+will open a browser session connecting to http://localhost:3000/ showing the react app. You can try to add or remove notes using one of the pre-created accounts with its key on the website. This react app will interact with the smart contract, performing transactions, which are written to the blockchain, which stores note data in the multi index table of the smart contract running on your local nodeos.
 
-xo needs to be installed globally:
+## Stopping blockchain or DApp
 
-    install -g xo
+**stopping the blockchain**
 
-You can check linting by running `xo` or by running `npm test`.
+In the first (blockchain) terminal window, press `ctrl+c` on your keyboard, the log will stop printing. And then execute:
+```sh
+docker stop eosio_notechain_container
+```
 
-Note: There are currently no application specific tests, beyond style checking.
+This action will take a few seconds. The blockchain will be stopped.
+
+**stopping the DApp**
+
+In the second (frontend) terminal window, press `ctrl+c` on your keyboard. The frontend react app will be stopped.
+
+## Restarting blockchain or DApp
+
+**restarting the blockchain**
+
+In the first (blockchain) terminal window, execute this command:
+```sh
+./start_eosio_docker.sh
+```
+
+The blockchain will be resumed automatically and the log will be outputted to the terminal.
+
+**restarting the DApp**
+
+In the second (frontend) terminal window, you can restart the frontend react app by executing:
+```sh
+./start_frontend.sh
+```
+
+## Reset blockchain data
+
+First, you need to stop the blockchain (as above) and then execute:
+```sh
+./first_time_setup.sh
+```
+
+This removes all data on the blockchain, including accounts, deployed smart contracts, etc... The block count will be reset when you start the blockchain again.
+
+## Project structure
+
+```js
+noteChain // project directory
+├── eosio_docker
+│   ├── * contracts // this folder will be mounted into docker
+│   │   └── notechain
+│   │       └── notechain.cpp // the main smart contract
+│   ├── * data // blockchain data, generated after first_time_setup.sh
+│   │   ├── blocks
+│   │   ├── state
+│   │   └── initialized // to indicate whether the blockchain has been initialized or not
+│   └── * scripts // scripts and utilities for docker container
+│       ├── accounts.json // pre-create account names, public and private keys (for demo only)
+│       ├── continue_blockchain.sh // continue the stopped blockchain
+│       ├── create_accounts.sh // create account data
+│       ├── deploy_contract.sh // deploy contract
+│       └── init_blockchain.sh // script for creating accounts and deploying contract inside docker container
+└── frontend
+    ├── node_modules // generated after npm install
+    ├── public
+    │   └── index.html // html skeleton for create react app
+    ├── src
+    │   ├── pages
+    │   │   └── index.jsx // an one-pager jsx, include react component and Material-UI
+    │   └── index.js // for react-dom to render the app
+    ├── package-lock.json // generated after npm install
+    └── package.json // for npm packages
+
+* means the directory will be mounted to the docker container. Whenever the file changes on the local machine, it will be automatically reflected in the docker environment.
+```
+
+## DApp development
+
+The DApp consists of two parts. eosio blockchain and frontend react app. These can be found in:
+
+- eosio_docker
+    - eosio block producing node (local node) wrapped in a docker container
+        - 1 smart contract
+        - auto smart contract deployment
+        - auto create 7 user accounts
+- frontend
+    - node.js development environment
+        - create-react-app: http://localhost:3000/
+
+Users interact with the UI in client and sign the transaction in frontend. The signed transaction (which is an `update` action in this demo DApp) is sent to the blockchain directly. After the transaction is accepted in blockchain, the note is added into the multi index table in blockchain.
+
+The UI, index.jsx, reads the notes data directly from nodeos using 'getTableRows()'. The smart contract, notechain.cpp, stores these notes in the multi index table using 'emplace()'' and 'modify()'.
+
+## Docker usage
+
+Docker is used to wrap the eosio software inside and run a container (instance) from an image (eosio/eos-dev v1.1.0). To work with the blockchain directly, by running the scripts or using a cleos command line, you need to go into the container bash.
+
+Go into container bash:
+```sh
+docker exec -it eosio_notechain_container bash
+```
+We have already set the container working directory to `/opt/eosio/bin/`, you could run cleos command in this directory directly. For documentation of cleos: https://developers.eos.io/eosio-nodeos/docs/cleos-overview
+
+You can also look at the `init_blockchain.sh` or `deploy_contract.sh` scripts for examples of cleos command lines.
+
+To exit from inside the container bash:
+```sh
+exit
+```
+
+## Smart contract (Blockchain):
+
+The smart contract can be found at `eosio_docker/contracts/notechain/notechain.cpp`, you can edit this smart contract. You will then need to compile and deploy the contract to the blockchain.
+
+To save time, we prepared some scripts for you. Execute the scripts in the container bash (see above.)
+
+The following script will help you to unlock the wallet, compile the modified contract and deploy to blockchain. 1st parameter is the contract name; 2nd parameter is the account name of the contract owner, 3rd and 4th parameter references  wallet related information that was created during the `Initial setup`:
+```sh
+./scripts/deploy_contract.sh notechain notechainacc notechainwal $(cat notechain_wallet_password.txt)
+```
+
+After running this script the modified smart contract will be deployed on the blockchain.
+
+Remember to redeploy the NoteChain contract each time you modify it using the steps above!
+
+## Frontend:
+
+The UI code can be found  at noteChain/frontend/src/pages/index.jsx), once you have edited this code the frontend react app compile automatically and the page on browser will be automatically refreshed. You can see the change on the browser once the browser finishes loading.
+
+## Docker commands
+
+If you are more familiar with docker, you could use the docker commands below to have better control with the whole environment. Below are the explanations of each of the commands:
+
+**Execute below command in `/eosio_docker`:**
+
+Run container from eosio/eos-dev image by mounting contracts / scripts to the container with running the init_blockchain.sh script as the process.
+The init_blockchain.sh script run the local node of the blockchain and initializes wallets / contract / data.
+```sh
+docker run --rm --name eosio_notechain_container \
+-p 8888:8888 -p 9876:9876 \
+--mount type=bind,src="$(pwd)"/contracts,dst=/opt/eosio/bin/contracts \
+--mount type=bind,src="$(pwd)"/scripts,dst=/opt/eosio/bin/scripts \
+--mount type=bind,src="$(pwd)"/data,dst=/mnt/dev/data \
+-w "/opt/eosio/bin/" eosio/eos-dev:v1.1.0 /bin/bash -c "./scripts/init_blockchain.sh"
+```
+
+Output and follow docker console logs:
+```sh
+docker logs eosio_notechain_container --follow
+```
+
+Remove the container (will remove all wallets / contracts / data), useful if you want to re-init the whole DApp.
+```sh
+docker rm -f eosio_notechain_container
+```
+
+Stop the container (see below troubleshoot section to see how to pause and continue the blockchain):
+```sh
+docker stop eosio_notechain_container
+```
