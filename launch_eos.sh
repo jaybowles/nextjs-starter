@@ -9,8 +9,9 @@ then
   echo "=== setup/reset data for eosio_docker ==="
   docker stop eosio_notechain_container || true && docker rm --force eosio_notechain_container || true
   rm -rf "./eosio_docker/data"
-  mkdir -p "./eosio_docker/data"
 fi
+
+mkdir -p "./eosio_docker/data"
 
 
 # check dependencies
